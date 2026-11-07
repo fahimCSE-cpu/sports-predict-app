@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Tips')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{admin/_nav :: tabs('tips')}"></div>
+<div th:replace="~{fragments :: flash}"></div>
+<main class="wrap narrow">
+    <h1>Offers &amp; tips</h1>
+    <form th:action="@{/admin/tips}" method="post" class="form">
+        <label>Title <input type="text" name="title" required></label>
+        <label>Text <textarea name="body" rows="2" maxlength="500" required></textarea></label>
+        <label>Type <select name="kind"><option value="TIP">Tip</option><option value="OFFER">Offer</option></select></label>
+        <button class="btn primary" type="submit">Add</button>
+    </form>
+    <div class="panel" th:each="t : ${tips}">
+        <span class="chip" th:text="${t.kind}">TIP</span> <b th:text="${t.title}">t</b>
+        <p th:text="${t.body}">b</p>
+        <form th:action="@{/admin/tips/{id}/delete(id=${t.id})}" method="post"><button class="btn danger small">Delete</button></form>
+    </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('FAQ')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<main class="wrap narrow">
+    <h1>Frequently asked questions</h1>
+    <details open><summary>How is the winning chance calculated?</summary>
+        <p>For each team we multiply the share of fans who support it by a likelihood built from its past win rate
+        (win rate<sup>4</sup> &times; (1 &minus; win rate)<sup>3</sup>). The two results are divided by their total, so the chances add up to 100%.
+        This is a simple Bayes rule.</p></details>
+    <details><summary>Can I trust it as betting advice?</summary>
+        <p>No. It is a simple, fun model. It ignores injuries, weather, pitch conditions and much more.</p></details>
+    <details><summary>Does my support change the result?</summary>
+        <p>Yes. Each support tap adds one fan to that team (once per match per visit), and the odds are recalculated.</p></details>
+    <details><summary>How do I ask a question?</summary>
+        <p>Open <b>View details</b> on any match and use the &ldquo;Ask the admin&rdquo; form at the bottom.</p></details>
+    <details><summary>How do I get email updates?</summary>
+        <p>Subscribe with your email at the bottom of the home page. You can only receive messages the admin sends.</p></details>
+    <details><summary>Who can publish matches?</summary>
+        <p>Only the admin, from the Admin panel after logging in.</p></details>
+</main>
+<div th:replace="~{fragments :: welcome}"></div>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

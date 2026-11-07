@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="tabs(active)" class="admintabs wrap">
+    <a th:href="@{/admin}" th:classappend="${active=='dashboard'}?'on'">Dashboard</a>
+    <a th:href="@{/admin/matches}" th:classappend="${active=='matches'}?'on'">Matches</a>
+    <a th:href="@{/admin/analytics}" th:classappend="${active=='analytics'}?'on'">Analytics</a>
+    <a th:href="@{/admin/inquiries}" th:classappend="${active=='inquiries'}?'on'">Inquiries</a>
+    <a th:href="@{/admin/tips}" th:classappend="${active=='tips'}?'on'">Tips &amp; offers</a>
+    <a th:href="@{/admin/mail}" th:classappend="${active=='mail'}?'on'">Send mail</a>
+</div>
+
+<div th:fragment="daychart(days)" class="chart" role="img" aria-label="Page views per day for the last 7 days">
+    <div class="col" th:each="d : ${days}">
+        <span class="val" th:text="${d.count()}">0</span>
+        <div class="barv" th:style="'height:' + ${d.pct()} + '%'"></div>
+        <span class="lbl" th:text="${d.label()}">Mon 1</span>
+    </div>
+</div>
+</body>
+</html>

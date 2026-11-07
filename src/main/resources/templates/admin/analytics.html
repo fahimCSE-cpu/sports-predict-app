@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Analytics')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{admin/_nav :: tabs('analytics')}"></div>
+<main class="wrap">
+    <h1>User analytics</h1>
+    <div class="stats">
+        <div class="stat"><b th:text="${views}">0</b><span>Page views</span></div>
+        <div class="stat"><b th:text="${checks}">0</b><span>Prediction checks</span></div>
+        <div class="stat"><b th:text="${votes}">0</b><span>Support votes</span></div>
+        <div class="stat"><b th:text="${inquiryCount}">0</b><span>Questions sent</span></div>
+        <div class="stat"><b th:text="${subs}">0</b><span>Subscribers</span></div>
+    </div>
+    <section class="panel">
+        <h2>Page views per day (last 7 days)</h2>
+        <div th:replace="~{admin/_nav :: daychart(${perDay})}"></div>
+    </section>
+    <section class="panel">
+        <h2>Engagement per match</h2>
+        <div class="scroll"><table class="grid">
+            <thead><tr><th>Match</th><th>Detail page views</th><th>Prediction checks</th><th>Votes</th></tr></thead>
+            <tbody><tr th:each="s : ${perMatch}">
+                <td th:text="${s.title()}">A vs B</td><td th:text="${s.views()}">0</td>
+                <td th:text="${s.checks()}">0</td><td th:text="${s.votes()}">0</td></tr></tbody>
+        </table></div>
+        <p class="note">Demo numbers are seeded on first run so the charts are not empty; real visits add to them.</p>
+    </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

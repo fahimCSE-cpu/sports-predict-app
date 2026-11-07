@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${view.match.title})}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{fragments :: flash}"></div>
+
+<main class="wrap narrow" th:with="m=${view.match}, p=${view.prediction}">
+    <p><a th:href="@{/}">&larr; All matches</a></p>
+    <h1 th:text="${m.teamA} + ' vs ' + ${m.teamB}">A vs B</h1>
+    <p class="meta"><span class="chip" th:text="${m.sport}">Sport</span>
+        <span th:text="${#temporals.format(m.matchDate, 'EEEE, d MMMM yyyy')}">date</span>
+        <span th:if="${m.venue}" th:text="'· ' + ${m.venue}"></span></p>
+    <p th:if="${m.details}" th:text="${m.details}"></p>
+
+    <div class="bar-split big">
+        <span class="seg a" th:style="'width:' + ${#numbers.formatDecimal(p.pctA(),1,2,'POINT')} + '%'" th:text="${m.teamA} + ' ' + ${#numbers.formatDecimal(p.pctA(),1,1)} + '%'">A</span>
+        <span class="seg b" th:style="'width:' + ${#numbers.formatDecimal(p.pctB(),1,2,'POINT')} + '%'" th:text="${m.teamB} + ' ' + ${#numbers.formatDecimal(p.pctB(),1,1)} + '%'">B</span>
+    </div>
+    <p class="verdict" th:if="${p.favoured() != 'Too close to call'}">
+        <b th:text="${p.favoured()}">India</b> has a <b th:text="${#numbers.formatDecimal(p.favouredPercent(),1,2)} + '%'">56.63%</b> chance to win.</p>
+    <p class="verdict" th:if="${p.favoured() == 'Too close to call'}">Too close to call - 50 / 50.</p>
+
+    <div class="actions">
+        <form th:action="@{/match/{id}/vote(id=${m.id})}" method="post">
+            <input type="hidden" name="side" value="A"><input type="hidden" name="back" value="detail">
+            <button class="btn ghost" type="submit" th:text="'Support ' + ${m.teamA}">A</button></form>
+        <form th:action="@{/match/{id}/vote(id=${m.id})}" method="post">
+            <input type="hidden" name="side" value="B"><input type="hidden" name="back" value="detail">
+            <button class="btn ghost" type="submit" th:text="'Support ' + ${m.teamB}">B</button></form>
+    </div>
+
+    <h2>Why this prediction? (the reasoning)</h2>
+    <p>We use a simple Bayes rule: <em>fan support</em> (prior) &times; <em>past win/loss form</em> (likelihood), then divide by the total so the two chances add up to 100%.</p>
+
+    <table class="calc">
+        <thead><tr><th>Step</th><th th:text="${m.teamA}">A</th><th th:text="${m.teamB}">B</th></tr></thead>
+        <tbody>
+        <tr><td>1. Supporters (share)</td>
+            <td th:text="${m.supportersA} + ' → ' + ${#numbers.formatDecimal(p.shareA(),1,3)}"></td>
+            <td th:text="${m.supportersB} + ' → ' + ${#numbers.formatDecimal(p.shareB(),1,3)}"></td></tr>
+        <tr><td>2. Win rate (wins / played)</td>
+            <td th:text="${m.teamAWins} + '/' + ${m.teamAPlayed} + ' = ' + ${#numbers.formatDecimal(p.rateA(),1,3)}"></td>
+            <td th:text="${m.teamBWins} + '/' + ${m.teamBPlayed} + ' = ' + ${#numbers.formatDecimal(p.rateB(),1,3)}"></td></tr>
+        <tr><td th:text="'3. Win-or-loss likelihood: rate^' + ${p.winExp()} + ' × (1 − rate)^' + ${p.lossExp()}"></td>
+            <td th:text="${#numbers.formatDecimal(p.likeA(),1,4)}"></td>
+            <td th:text="${#numbers.formatDecimal(p.likeB(),1,4)}"></td></tr>
+        <tr><td>4. Share × likelihood</td>
+            <td th:text="${#numbers.formatDecimal(p.jointA(),1,6)}"></td>
+            <td th:text="${#numbers.formatDecimal(p.jointB(),1,6)}"></td></tr>
+        <tr><td>5. Divide by total (<span th:text="${#numbers.formatDecimal(p.total(),1,6)}"></span>)</td>
+            <td><b th:text="${#numbers.formatDecimal(p.pctA(),1,2)} + '%'"></b></td>
+            <td><b th:text="${#numbers.formatDecimal(p.pctB(),1,2)} + '%'"></b></td></tr>
+        </tbody>
+    </table>
+
+    <h2>Ask the admin</h2>
+    <p>Something unclear after viewing the details? Send a normal question.</p>
+    <form th:action="@{/match/{id}/inquiry(id=${m.id})}" th:object="${inquiry}" method="post" class="form">
+        <div class="errors" th:if="${#fields.hasErrors('*')}"><p th:each="e : ${#fields.errors('*')}" th:text="${e}"></p></div>
+        <label>Your name <input type="text" th:field="*{name}" maxlength="80" required></label>
+        <label>Email <input type="email" th:field="*{email}" maxlength="120" required></label>
+        <label>Your question <textarea th:field="*{message}" rows="4" maxlength="1000" required></textarea></label>
+        <button class="btn primary" type="submit">Send question</button>
+    </form>
+</main>
+
+<div th:replace="~{fragments :: welcome}"></div>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

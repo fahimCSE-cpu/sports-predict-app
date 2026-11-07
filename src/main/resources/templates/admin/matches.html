@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Matches')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{admin/_nav :: tabs('matches')}"></div>
+<div th:replace="~{fragments :: flash}"></div>
+<main class="wrap">
+    <h1>Matches <a class="btn primary small" th:href="@{/admin/matches/new}">+ New match</a></h1>
+    <div class="scroll">
+    <table class="grid">
+        <thead><tr><th>Match</th><th>Date</th><th>Form (W/P)</th><th>Supporters</th><th>Prediction</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="v : ${matches}" th:with="m=${v.match}, p=${v.prediction}">
+            <td><b th:text="${m.title}">A vs B</b><br><small th:text="${m.sport}"></small></td>
+            <td th:text="${m.matchDate}">date</td>
+            <td th:text="${m.teamAWins} + '/' + ${m.teamAPlayed} + ' · ' + ${m.teamBWins} + '/' + ${m.teamBPlayed}"></td>
+            <td th:text="${m.supportersA} + ' · ' + ${m.supportersB}"></td>
+            <td th:text="${p.favoured()} + ' ' + ${#numbers.formatDecimal(p.favouredPercent(),1,1)} + '%'"></td>
+            <td><span class="chip" th:classappend="${m.published}?'gold'" th:text="${m.published}?'Published':'Hidden'"></span></td>
+            <td class="rowact">
+                <a class="btn ghost small" th:href="@{/admin/matches/{id}/edit(id=${m.id})}">Edit</a>
+                <form th:action="@{/admin/matches/{id}/toggle(id=${m.id})}" method="post" class="inline"><button class="btn ghost small" th:text="${m.published}?'Hide':'Publish'">Toggle</button></form>
+                <form th:action="@{/admin/matches/{id}/delete(id=${m.id})}" method="post" class="inline" onsubmit="return confirm('Delete this match?')"><button class="btn danger small">Delete</button></form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

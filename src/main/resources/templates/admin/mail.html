@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Send mail')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{admin/_nav :: tabs('mail')}"></div>
+<div th:replace="~{fragments :: flash}"></div>
+<main class="wrap narrow">
+    <h1>Send an update by mail</h1>
+    <p class="note" th:unless="${live}">Mail is disabled, so messages are only written to the application log.
+        Set <code>app.mail.enabled=true</code> and the <code>spring.mail.*</code> settings to really send.</p>
+    <form th:action="@{/admin/mail}" method="post" class="form">
+        <label>Subject <input type="text" name="subject" required></label>
+        <label>Message <textarea name="body" rows="6" required></textarea></label>
+        <button class="btn primary" type="submit" th:text="'Send to ' + ${#lists.size(subscribers)} + ' subscriber(s)'">Send</button>
+    </form>
+    <h2>Subscribers</h2>
+    <ul class="plain"><li th:each="s : ${subscribers}" th:text="${s.email}">mail</li></ul>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Match')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{admin/_nav :: tabs('matches')}"></div>
+<main class="wrap narrow">
+    <h1 th:text="${match.id == null} ? 'New match' : 'Edit match'">Match</h1>
+    <form th:action="@{/admin/matches}" th:object="${match}" method="post" class="form">
+        <input type="hidden" th:field="*{id}">
+        <div class="errors" th:if="${#fields.hasErrors('*')}"><p th:each="e : ${#fields.errors('*')}" th:text="${e}"></p></div>
+
+        <label>Sport / format <input type="text" th:field="*{sport}" placeholder="T20 Cricket" required></label>
+        <div class="two">
+            <label>Team A <input type="text" th:field="*{teamA}" required></label>
+            <label>Team B <input type="text" th:field="*{teamB}" required></label>
+        </div>
+        <div class="two">
+            <label>Match date <input type="date" th:field="*{matchDate}" required></label>
+            <label>Venue <input type="text" th:field="*{venue}"></label>
+        </div>
+
+        <fieldset><legend>Past form</legend>
+            <div class="two">
+                <label>Team A matches played <input type="number" min="0" th:field="*{teamAPlayed}"></label>
+                <label>Team A wins <input type="number" min="0" th:field="*{teamAWins}"></label>
+                <label>Team B matches played <input type="number" min="0" th:field="*{teamBPlayed}"></label>
+                <label>Team B wins <input type="number" min="0" th:field="*{teamBWins}"></label>
+            </div>
+        </fieldset>
+        <fieldset><legend>Supporters (starting poll; visitors add to it)</legend>
+            <div class="two">
+                <label>Supports Team A <input type="number" min="0" th:field="*{supportersA}"></label>
+                <label>Supports Team B <input type="number" min="0" th:field="*{supportersB}"></label>
+            </div>
+        </fieldset>
+
+        <label>Details / notes <textarea th:field="*{details}" rows="4" maxlength="2000"></textarea></label>
+        <label class="check"><input type="checkbox" th:field="*{published}"> Publish to the front page</label>
+        <label class="check"><input type="checkbox" name="notify" value="true"> Email subscribers about this match</label>
+
+        <div class="actions left">
+            <button class="btn primary" type="submit">Save match</button>
+            <a class="btn ghost" th:href="@{/admin/matches}">Cancel</a>
+        </div>
+    </form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Inquiries')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{admin/_nav :: tabs('inquiries')}"></div>
+<div th:replace="~{fragments :: flash}"></div>
+<main class="wrap narrow">
+    <h1>User inquiries</h1>
+    <p th:if="${#lists.isEmpty(inquiries)}" class="empty">No inquiries yet.</p>
+    <article class="panel" th:each="q : ${inquiries}">
+        <p><b th:text="${q.name}">Name</b> &lt;<span th:text="${q.email}">email</span>&gt;
+            about <i th:text="${q.matchTitle}">match</i>
+            <span class="chip" th:classappend="${q.resolved}?'gold'" th:text="${q.resolved}?'Answered':'Open'"></span></p>
+        <blockquote th:text="${q.message}">message</blockquote>
+        <p th:if="${q.reply}"><b>Your reply:</b> <span th:text="${q.reply}"></span></p>
+        <form th:action="@{/admin/inquiries/{id}/reply(id=${q.id})}" method="post" class="form">
+            <label>Reply <textarea name="reply" rows="2" required th:text="${q.reply}"></textarea></label>
+            <div class="actions left">
+                <button class="btn primary small" type="submit">Send reply</button>
+            </div>
+        </form>
+        <form th:action="@{/admin/inquiries/{id}/delete(id=${q.id})}" method="post" onsubmit="return confirm('Delete?')">
+            <button class="btn danger small">Delete</button></form>
+    </article>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

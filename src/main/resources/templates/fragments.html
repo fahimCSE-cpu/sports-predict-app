@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+    <title th:text="${title} + ' | Sports Predictive Selection'">Sports Predictive Selection</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<nav class="topbar" th:fragment="nav">
+    <div class="wrap bar">
+        <a class="brand" th:href="@{/}" aria-label="Sports Predictive Selection - home">
+            <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
+                <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="3"/>
+                <path d="M8 26 L16 18 L22 23 L32 12" fill="none" stroke="#f5b301" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="32" cy="12" r="3" fill="#f5b301"/>
+            </svg>
+            <span>Sports <b>Predict</b></span>
+        </a>
+        <ul class="links">
+            <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Login</a></li>
+            <li><a th:href="@{/admin}">Admin</a></li>
+            <li><a th:href="@{/faq}">FAQ</a></li>
+            <li sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post" class="inline"><button class="linklike" type="submit">Logout</button></form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div th:fragment="flash" th:if="${msg}" class="wrap"><div class="flash" role="status" th:text="${msg}"></div></div>
+
+<div th:fragment="welcome" id="welcome" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <h2 id="welcome-title">Welcome! &#128075;</h2>
+        <p>See who is more likely to win the next match - in a few taps.</p>
+        <ul>
+            <li>Browse the <b>match banners</b> on the home page.</li>
+            <li>Press <b>Check which team succeeds</b> to reveal the winning chance.</li>
+            <li><b>Support</b> your team - fan support is part of the maths.</li>
+            <li>Open <b>View details</b> to see the full reasoning, or ask the admin a question.</li>
+            <li>Subscribe by email to hear about new matches first.</li>
+        </ul>
+        <button id="welcome-close" class="btn primary" type="button">Got it, let's go</button>
+    </div>
+</div>
+
+<footer class="footer" th:fragment="footer">
+    <div class="wrap">Sports Predictive Selection System &middot; Predictions are for fun, not betting advice.</div>
+    <script th:src="@{/js/app.js}"></script>
+</footer>
+</body>
+</html>

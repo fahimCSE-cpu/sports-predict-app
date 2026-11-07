@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body>
+<nav th:replace="~{fragments :: nav}"></nav>
+<div th:replace="~{fragments :: flash}"></div>
+
+<header class="hero">
+    <div class="wrap">
+        <h1>Which team wins the next match?</h1>
+        <p>Past form + fan support, combined with a simple Bayes rule.</p>
+    </div>
+</header>
+
+<main class="wrap">
+    <p th:if="${#lists.isEmpty(matches)}" class="empty">No matches published yet. Check back soon!</p>
+
+    <article class="banner" th:each="v : ${matches}" th:id="'match-' + ${v.match.id}" th:with="m=${v.match}, p=${v.prediction}">
+        <div class="banner-top">
+            <span class="chip" th:text="${m.sport}">Sport</span>
+            <span class="meta" th:text="${#temporals.format(m.matchDate, 'EEE, d MMM yyyy')} + (${m.venue} != null and ${m.venue} != '' ? ' · ' + ${m.venue} : '')">date</span>
+        </div>
+
+        <div class="versus">
+            <div class="team">
+                <div class="badge a" th:text="${#strings.substring(m.teamA,0,1)}">A</div>
+                <h2 th:text="${m.teamA}">Team A</h2>
+                <small th:text="${m.teamAWins} + ' wins / ' + ${m.teamAPlayed} + ' played'">4/6</small>
+            </div>
+            <div class="vs">VS</div>
+            <div class="team">
+                <div class="badge b" th:text="${#strings.substring(m.teamB,0,1)}">B</div>
+                <h2 th:text="${m.teamB}">Team B</h2>
+                <small th:text="${m.teamBWins} + ' wins / ' + ${m.teamBPlayed} + ' played'">3/6</small>
+            </div>
+        </div>
+
+        <div class="actions">
+            <form th:action="@{/match/{id}/vote(id=${m.id})}" method="post">
+                <input type="hidden" name="side" value="A">
+                <button class="btn ghost" type="submit" th:text="'Support ' + ${m.teamA} + ' (' + ${m.supportersA} + ')'">Support A</button>
+            </form>
+            <button class="btn primary check-btn" type="button" th:attr="data-match=${m.id}">Check which team succeeds?</button>
+            <form th:action="@{/match/{id}/vote(id=${m.id})}" method="post">
+                <input type="hidden" name="side" value="B">
+                <button class="btn ghost" type="submit" th:text="'Support ' + ${m.teamB} + ' (' + ${m.supportersB} + ')'">Support B</button>
+            </form>
+        </div>
+
+        <div class="result" hidden>
+            <div class="bar-split" role="img" th:with="lbl=${m.teamA} + ' ' + ${#numbers.formatDecimal(p.pctA(),1,1)} + '% vs ' + ${m.teamB} + ' ' + ${#numbers.formatDecimal(p.pctB(),1,1)} + '%'" th:attr="aria-label=${lbl}">
+                <span class="seg a" th:style="'width:' + ${#numbers.formatDecimal(p.pctA(),1,2,'POINT')} + '%'" th:text="${#numbers.formatDecimal(p.pctA(),1,1)} + '%'">43%</span>
+                <span class="seg b" th:style="'width:' + ${#numbers.formatDecimal(p.pctB(),1,2,'POINT')} + '%'" th:text="${#numbers.formatDecimal(p.pctB(),1,1)} + '%'">57%</span>
+            </div>
+            <p class="verdict" th:if="${p.favoured() != 'Too close to call'}">
+                <b th:text="${p.favoured()}">India</b> has a
+                <b th:text="${#numbers.formatDecimal(p.favouredPercent(),1,2)} + '%'">56.63%</b> chance to win.
+            </p>
+            <p class="verdict" th:if="${p.favoured() == 'Too close to call'}">Too close to call - 50 / 50.</p>
+            <a class="btn link" th:href="@{/match/{id}(id=${m.id})}">View details &amp; reasoning &rarr;</a>
+        </div>
+    </article>
+
+    <section class="tips" th:if="${!#lists.isEmpty(tips)}">
+        <h2>Great offers &amp; tips to explore</h2>
+        <div class="cards">
+            <div class="card" th:each="t : ${tips}">
+                <span class="chip" th:classappend="${t.kind.name() == 'OFFER'} ? 'gold'" th:text="${t.kind.name() == 'OFFER'} ? 'Offer' : 'Tip'">Tip</span>
+                <h3 th:text="${t.title}">Title</h3>
+                <p th:text="${t.body}">Body</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="subscribe" id="subscribe">
+        <h2>Get match updates by email</h2>
+        <form th:action="@{/subscribe}" method="post" class="row">
+            <label class="sr" for="sub-email">Email</label>
+            <input id="sub-email" type="email" name="email" placeholder="you@example.com" required>
+            <button class="btn primary" type="submit">Subscribe</button>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments :: welcome}"></div>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

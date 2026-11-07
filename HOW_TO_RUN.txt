@@ -1,0 +1,19 @@
+SPORTS PREDICTIVE SELECTION SYSTEM - HOW TO RUN
+
+1. Install JDK 17 or newer (check: java -version) and Maven 3.8+ (check: mvn -v).
+   Internet access is needed the first time so Maven can download dependencies.
+2. Unzip the project and open a terminal inside the folder (where pom.xml is).
+3. Run the tests (optional):   mvn test
+4. Start the app:              mvn spring-boot:run
+5. Open http://localhost:8080 in your browser.
+
+Admin login: http://localhost:8080/login   ->  admin / admin123
+(change in src/main/resources/application.properties)
+
+IntelliJ / Eclipse / VS Code: open as a Maven project and run SportsPredictApplication.
+
+Notes
+- Data is saved in the ./data folder (H2 database). Delete it to reset to sample data.
+- Port busy? Change server.port in application.properties.
+- Email is off by default (messages are written to the console log).
+  To really send, set app.mail.enabled=true and the spring.mail.* lines.
